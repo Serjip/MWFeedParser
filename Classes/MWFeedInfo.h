@@ -29,18 +29,12 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MWFeedInfo : NSObject <NSCoding> {
-	
-	NSString *title; // Feed title
-	NSString *link; // Feed link
-	NSString *summary; // Feed summary / description
-	NSURL *url; // Feed url
-	
-}
+@interface MWFeedInfo : NSObject <NSCoding>
 
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) NSString *link;
-@property (nonatomic, copy) NSString *summary;
-@property (nonatomic, copy) NSURL *url;
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *link;
+@property (nonatomic, strong) NSString *summary;
+@property (nonatomic, strong) NSURL *url;
+@property (nonatomic, strong) NSURL *imageURL;
 
 @end

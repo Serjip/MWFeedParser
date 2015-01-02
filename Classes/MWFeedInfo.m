@@ -33,36 +33,40 @@
 
 @implementation MWFeedInfo
 
-@synthesize title, link, summary, url;
-
 #pragma mark NSObject
 
-- (NSString *)description {
+- (NSString *)description
+{
 	NSMutableString *string = [[NSMutableString alloc] initWithString:@"MWFeedInfo: "];
-	if (title)   [string appendFormat:@"“%@”", EXCERPT(title, 50)];
-	//if (link)    [string appendFormat:@" (%@)", link];
-	//if (summary) [string appendFormat:@", %@", MWExcerpt(summary, 50)];
+	if (self.title)   [string appendFormat:@"“%@”", EXCERPT(self.title, 50)];
 	return string;
 }
 
 
 #pragma mark NSCoding
 
-- (id)initWithCoder:(NSCoder *)decoder {
-	if ((self = [super init])) {
-		title = [decoder decodeObjectForKey:@"title"];
-		link = [decoder decodeObjectForKey:@"link"];
-		summary = [decoder decodeObjectForKey:@"summary"];
-		url = [decoder decodeObjectForKey:@"url"];
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    self = [super init];
+    
+	if (self)
+    {
+		_title = [decoder decodeObjectForKey:@"title"];
+		_link = [decoder decodeObjectForKey:@"link"];
+		_summary = [decoder decodeObjectForKey:@"summary"];
+		_url = [decoder decodeObjectForKey:@"url"];
+        _imageURL = [decoder decodeObjectForKey:@"imageURL"];
 	}
 	return self;
 }
 
-- (void)encodeWithCoder:(NSCoder *)encoder {
-	if (title) [encoder encodeObject:title forKey:@"title"];
-	if (link) [encoder encodeObject:link forKey:@"link"];
-	if (summary) [encoder encodeObject:summary forKey:@"summary"];
-	if (url) [encoder encodeObject:url forKey:@"url"];
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:_title forKey:@"title"];
+	[encoder encodeObject:_link forKey:@"link"];
+	[encoder encodeObject:_summary forKey:@"summary"];
+	[encoder encodeObject:_url forKey:@"url"];
+    [encoder encodeObject:_imageURL forKey:@"imageURL"];
 }
 
 @end
