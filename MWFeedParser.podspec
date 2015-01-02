@@ -21,6 +21,7 @@ Pod::Spec.new do |s|
                           'Classes/MWFeedParser_Private.h'
         ss.dependency 'MWFeedParser/NSString+HTML'
         ss.dependency 'MWFeedParser/NSDate+InternetDateTime'
+        ss.dependincy 'UniversalDetector'
     end
     s.subspec 'NSString+HTML' do |ss|
         s.platform = nil
