@@ -28,52 +28,86 @@
 //
 
 #import "MWFeedItem.h"
+#import "NSString+HTML.h"
 
 #define EXCERPT(str, len) (([str length] > len) ? [[str substringToIndex:len-1] stringByAppendingString:@"…"] : str)
 
 @implementation MWFeedItem
 
-@synthesize identifier, title, link, date, updated, summary, content, author, enclosures;
-
 #pragma mark NSObject
 
 - (NSString *)description {
 	NSMutableString *string = [[NSMutableString alloc] initWithString:@"MWFeedItem: "];
-	if (title)   [string appendFormat:@"“%@”", EXCERPT(title, 50)];
-	if (date)    [string appendFormat:@" - %@", date];
-	//if (link)    [string appendFormat:@" (%@)", link];
-	//if (summary) [string appendFormat:@", %@", EXCERPT(summary, 50)];
+	if (self.title)   [string appendFormat:@"“%@”", EXCERPT(self.title, 50)];
+	if (self.date)    [string appendFormat:@" - %@", self.date];
 	return string;
 }
 
+#pragma mark - Properties
+
+@synthesize guid = _guid;
+
+- (NSString *)guid
+{
+    if (_guid)
+        return _guid;
+    
+    if (self.identifier.length)
+    {
+        _guid = [self.identifier md5HashSum];
+    }
+    else if (self.link.length)
+    {
+        _guid = [self.link md5HashSum];
+    }
+    else if (self.title.length)
+    {
+        _guid = [self.title md5HashSum];
+    }
+    else
+    {
+        _guid = [[NSString stringWithFormat:@"%@%@%@%@", self.identifier, self.date, self.title, self.link] md5HashSum];
+    }
+    
+    return _guid;
+}
 
 #pragma mark NSCoding
 
-- (id)initWithCoder:(NSCoder *)decoder {
-	if ((self = [super init])) {
-		identifier = [decoder decodeObjectForKey:@"identifier"];
-		title = [decoder decodeObjectForKey:@"title"];
-		link = [decoder decodeObjectForKey:@"link"];
-		date = [decoder decodeObjectForKey:@"date"];
-		updated = [decoder decodeObjectForKey:@"updated"];
-		summary = [decoder decodeObjectForKey:@"summary"];
-		content = [decoder decodeObjectForKey:@"content"];
-		author = [decoder decodeObjectForKey:@"author"];
-		enclosures = [decoder decodeObjectForKey:@"enclosures"];
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    self = [super init];
+    if (self)
+    {
+		_identifier = [decoder decodeObjectForKey:@"identifier"];
+		_title = [decoder decodeObjectForKey:@"title"];
+		_link = [decoder decodeObjectForKey:@"link"];
+		_date = [decoder decodeObjectForKey:@"date"];
+		_updated = [decoder decodeObjectForKey:@"updated"];
+		_summary = [decoder decodeObjectForKey:@"summary"];
+		_content = [decoder decodeObjectForKey:@"content"];
+		_author = [decoder decodeObjectForKey:@"author"];
+		_enclosures = [decoder decodeObjectForKey:@"enclosures"];
+        
+        _imageURL = [decoder decodeObjectForKey:@"imageURL"];
+        _guid = [decoder decodeObjectForKey:@"guid"];
 	}
 	return self;
 }
 
-- (void)encodeWithCoder:(NSCoder *)encoder {
-	if (identifier) [encoder encodeObject:identifier forKey:@"identifier"];
-	if (title) [encoder encodeObject:title forKey:@"title"];
-	if (link) [encoder encodeObject:link forKey:@"link"];
-	if (date) [encoder encodeObject:date forKey:@"date"];
-	if (updated) [encoder encodeObject:updated forKey:@"updated"];
-	if (summary) [encoder encodeObject:summary forKey:@"summary"];
-	if (content) [encoder encodeObject:content forKey:@"content"];
-	if (author) [encoder encodeObject:author forKey:@"author"];
-	if (enclosures) [encoder encodeObject:enclosures forKey:@"enclosures"];
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+	[encoder encodeObject:_identifier forKey:@"identifier"];
+	[encoder encodeObject:_title forKey:@"title"];
+	[encoder encodeObject:_link forKey:@"link"];
+	[encoder encodeObject:_date forKey:@"date"];
+	[encoder encodeObject:_updated forKey:@"updated"];
+	[encoder encodeObject:_summary forKey:@"summary"];
+	[encoder encodeObject:_content forKey:@"content"];
+	[encoder encodeObject:_author forKey:@"author"];
+	[encoder encodeObject:_enclosures forKey:@"enclosures"];
+    [encoder encodeObject:_imageURL forKey:@"imageURL"];
+    [encoder encodeObject:self.guid forKey:@"guid"];
 }
 
 @end
