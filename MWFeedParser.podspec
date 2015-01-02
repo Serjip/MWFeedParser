@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
     }
     s.platform = :ios, '5.1.1'
     s.requires_arc = true
+    s.dependency 'UniversalDetector'
     s.subspec 'FeedParser' do |ss|
         ss.source_files = 'Classes/MWFeedInfo.{h,m}',
                           'Classes/MWFeedItem.{h,m}',
@@ -21,7 +22,6 @@ Pod::Spec.new do |s|
                           'Classes/MWFeedParser_Private.h'
         ss.dependency 'MWFeedParser/NSString+HTML'
         ss.dependency 'MWFeedParser/NSDate+InternetDateTime'
-        ss.dependincy 'UniversalDetector'
     end
     s.subspec 'NSString+HTML' do |ss|
         s.platform = nil
