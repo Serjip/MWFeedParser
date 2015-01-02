@@ -46,3 +46,10 @@ Icon
 #
 
 /Icon.png
+
+#
+# Pods
+#
+Pods
+Podfile.lock
+
