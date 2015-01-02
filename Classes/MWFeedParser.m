@@ -31,6 +31,7 @@
 #import "MWFeedParser_Private.h"
 #import "NSString+HTML.h"
 #import "NSDate+InternetDateTime.h"
+#import <UniversalDetector/UniversalDetector.h>
 
 // NSXMLParser Logging
 #if 0 // Set to 1 to enable XML parsing logs
@@ -200,28 +201,37 @@
 		// Check whether it's UTF-8
 		if (![[textEncodingName lowercaseString] isEqualToString:@"utf-8"]) {
 			
-			// Not UTF-8 so convert
+            // Not UTF-8 so convert
 			MWLog(@"MWFeedParser: XML document was not UTF-8 so we're converting it");
 			NSString *string = nil;
-			
-			// Attempt to detect encoding from response header
-			NSStringEncoding nsEncoding = 0;
-			if (textEncodingName) {
-				CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef)textEncodingName);
-				if (cfEncoding != kCFStringEncodingInvalidId) {
-					nsEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
-					if (nsEncoding != 0) string = [[NSString alloc] initWithData:data encoding:nsEncoding];
-				}
-			}
-			
-			// If that failed then make our own attempts
-			if (!string) {
-				// http://www.mikeash.com/pyblog/friday-qa-2010-02-19-character-encodings.html
-				string			    = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-				if (!string) string = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
-				if (!string) string = [[NSString alloc] initWithData:data encoding:NSMacOSRomanStringEncoding];
-			}
-			
+            NSStringEncoding nsEncoding = 0;
+            CFStringEncoding cfEncoding = [UniversalDetector encodingWithData:data];
+            if (cfEncoding != kCFStringEncodingInvalidId) {
+                nsEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
+                //NSLog(@"nsEncoding: %lu", (unsigned long)nsEncoding);
+                if (nsEncoding != 0) string = [[NSString alloc] initWithData:data encoding:nsEncoding];
+            }
+            if (!string) {
+                // Attempt to detect encoding from response header
+                
+                if (textEncodingName) {
+                    CFStringEncoding cfEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef)textEncodingName);
+                    if (cfEncoding != kCFStringEncodingInvalidId) {
+                        nsEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
+                        if (nsEncoding != 0) string = [[NSString alloc] initWithData:data encoding:nsEncoding];
+                    }
+                }
+                
+                // If that failed then make our own attempts
+                if (!string) {
+                    // http://www.mikeash.com/pyblog/friday-qa-2010-02-19-character-encodings.html
+                    string			    = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                    if (!string) string = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
+                    if (!string) string = [[NSString alloc] initWithData:data encoding:NSMacOSRomanStringEncoding];
+                }
+                
+            }
+            
 			// Nil data
 			data = nil;
 			
@@ -582,7 +592,7 @@
             
             // Remove newlines and whitespace from currentText
             NSString *processedText = [currentText stringByRemovingNewLinesAndWhitespace];
-
+            
             // Process
             switch (feedType) {
                 case FeedTypeRSS: {
@@ -603,6 +613,17 @@
                         else if ([currentPath isEqualToString:@"/rss/channel/item/pubDate"]) { if (processedText.length > 0) item.date = [NSDate dateFromInternetDateTimeString:processedText formatHint:DateFormatHintRFC822]; processed = YES; }
                         else if ([currentPath isEqualToString:@"/rss/channel/item/enclosure"]) { [self createEnclosureFromAttributes:currentElementAttributes andAddToItem:item]; processed = YES; }
                         else if ([currentPath isEqualToString:@"/rss/channel/item/dc:date"]) { if (processedText.length > 0) item.date = [NSDate dateFromInternetDateTimeString:processedText formatHint:DateFormatHintRFC3339]; processed = YES; }
+                    
+                        else if ([currentPath hasPrefix:@"/rss/channel/item/media"]) {
+                            
+                            if (processedText.length > 0) {
+                                NSString *imageLink = [currentElementAttributes objectForKey:@"url"];
+                                if (imageLink.length) {
+                                    item.imageURL = [NSURL URLWithString:imageLink];
+                                }
+                            }
+                            processed = YES;
+                        }
                     }
                     
                     // Info
@@ -610,6 +631,7 @@
                         if ([currentPath isEqualToString:@"/rss/channel/title"]) { if (processedText.length > 0) info.title = processedText; processed = YES; }
                         else if ([currentPath isEqualToString:@"/rss/channel/description"]) { if (processedText.length > 0) info.summary = processedText; processed = YES; }
                         else if ([currentPath isEqualToString:@"/rss/channel/link"]) { if (processedText.length > 0) info.link = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/rss/channel/image/url"]) { if (processedText.length > 0) info.imageURL = [NSURL URLWithString:processedText]; processed = YES; }
                     }
                     
                     break;
@@ -637,6 +659,7 @@
                         if ([currentPath isEqualToString:@"/rdf:RDF/channel/title"]) { if (processedText.length > 0) info.title = processedText; processed = YES; }
                         else if ([currentPath isEqualToString:@"/rdf:RDF/channel/description"]) { if (processedText.length > 0) info.summary = processedText; processed = YES; }
                         else if ([currentPath isEqualToString:@"/rdf:RDF/channel/link"]) { if (processedText.length > 0) info.link = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/rdf:RDF/channel/image/url"]) { if (processedText.length > 0) info.imageURL = [NSURL URLWithString:processedText]; processed = YES; }
                     }
                     
                     break;
@@ -658,6 +681,18 @@
                         else if ([currentPath isEqualToString:@"/feed/entry/dc:creator"]) { if (processedText.length > 0) item.author = processedText; processed = YES; }
                         else if ([currentPath isEqualToString:@"/feed/entry/published"]) { if (processedText.length > 0) item.date = [NSDate dateFromInternetDateTimeString:processedText formatHint:DateFormatHintRFC3339]; processed = YES; }
                         else if ([currentPath isEqualToString:@"/feed/entry/updated"]) { if (processedText.length > 0) item.updated = [NSDate dateFromInternetDateTimeString:processedText formatHint:DateFormatHintRFC3339]; processed = YES; }
+                        
+                        else if ([currentPath hasPrefix:@"/feed/entry/media"]) {
+                            if (processedText.length > 0) {
+                                NSString *imageLink = [currentElementAttributes objectForKey:@"url"];
+                                if (imageLink.length)
+                                {
+                                    item.imageURL = [NSURL URLWithString:imageLink];
+                                }
+                            }
+                            processed = YES;
+                        }
+                        
                     }
                     
                     // Info
@@ -681,9 +716,29 @@
             if (((feedType == FeedTypeRSS || feedType == FeedTypeRSS1) && [qName isEqualToString:@"item"]) ||
                 (feedType == FeedTypeAtom && [qName isEqualToString:@"entry"])) {
                 
+                if (! item.imageURL)
+                {
+                    // Try to extract images from <img> tags in item content / summary SP
+                    //Adding images from content
+                    NSString *contentImageUrl = [self parseImagesFromXHTMLString:item.content];
+                    if (contentImageUrl.length)
+                    {
+                        item.imageURL = [NSURL URLWithString:contentImageUrl];
+                    }
+                }
+                
+                if (! item.imageURL)
+                {
+                    //Adding images from summary
+                    NSString *summaryImageUrl = [self parseImagesFromXHTMLString:item.summary];
+                    if (summaryImageUrl.length)
+                    {
+                        item.imageURL = [NSURL URLWithString:summaryImageUrl];
+                    }
+                }
+                
                 // Dispatch item to delegate
                 [self dispatchFeedItemToDelegate];
-                
             }
         }
         
@@ -944,6 +999,28 @@
 		
 	}
 	return NO;
+}
+
+//SP parser images
+- (NSString *)parseImagesFromXHTMLString:(NSString *)html
+{
+    if (html.length == 0) {
+        return nil;
+    }
+    
+    NSString *urlImg = nil;
+    NSScanner *theScanner = [NSScanner scannerWithString:html];
+    // find start of IMG tag
+    [theScanner scanUpToString:@"<img" intoString:nil];
+    if (![theScanner isAtEnd]) {
+        [theScanner scanUpToString:@"src" intoString:nil];
+        NSCharacterSet *charset = [NSCharacterSet characterSetWithCharactersInString:@"\"'"];
+        [theScanner scanUpToCharactersFromSet:charset intoString:nil];
+        [theScanner scanCharactersFromSet:charset intoString:nil];
+        [theScanner scanUpToCharactersFromSet:charset intoString:&urlImg];
+        // "url" now contains the URL of the img
+    }
+    return urlImg;
 }
 
 @end
