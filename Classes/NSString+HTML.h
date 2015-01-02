@@ -64,4 +64,9 @@
 // DEPRECIATED - Please use NSString stringByConvertingHTMLToPlainText
 - (NSString *)stringByStrippingTags __attribute__((deprecated));
 
+/**
+ * The method returns md5 has summ from string
+ */
+- (NSString *)md5HashSum;
+
 @end
