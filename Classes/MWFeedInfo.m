@@ -51,6 +51,7 @@
     
 	if (self)
     {
+        _guid = [decoder decodeObjectForKey:@"guid"];
 		_title = [decoder decodeObjectForKey:@"title"];
 		_link = [decoder decodeObjectForKey:@"link"];
 		_summary = [decoder decodeObjectForKey:@"summary"];
@@ -62,6 +63,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
+    [encoder encodeObject:_guid forKey:@"guid"];
     [encoder encodeObject:_title forKey:@"title"];
 	[encoder encodeObject:_link forKey:@"link"];
 	[encoder encodeObject:_summary forKey:@"summary"];

@@ -31,6 +31,7 @@
 
 @interface MWFeedInfo : NSObject <NSCoding>
 
+@property (nonatomic, strong) NSNumber *guid;
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *link;
 @property (nonatomic, strong) NSString *summary;
