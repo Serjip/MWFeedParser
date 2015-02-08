@@ -29,9 +29,31 @@
 
 #import "MWFeedInfo.h"
 
+static NSString * const MWFeedInfoGuidKey       = @"id";
+static NSString * const MWFeedInfoTitleKey      = @"title";
+static NSString * const MWFeedInfoLinkKey       = @"link";
+static NSString * const MWFeedInfoSummaryKey    = @"summary";
+static NSString * const MWFeedInfoUrlKey        = @"url";
+static NSString * const MWFeedInfoImageUrlKey   = @"image";
+
 #define EXCERPT(str, len) (([str length] > len) ? [[str substringToIndex:len-1] stringByAppendingString:@"…"] : str)
 
 @implementation MWFeedInfo
+
+- (instancetype)initWithDictionary:(NSDictionary *)dict
+{
+    self = [super init];
+    if (self)
+    {
+        _guid = [dict objectForKey:MWFeedInfoGuidKey];
+        _title = [dict objectForKey:MWFeedInfoTitleKey];
+        _link = [dict objectForKey:MWFeedInfoLinkKey];
+        _summary = [dict objectForKey:MWFeedInfoSummaryKey];
+        _url = [dict objectForKey:MWFeedInfoUrlKey];
+        _imageURL = [dict objectForKey:MWFeedInfoImageUrlKey];
+    }
+    return self;
+}
 
 #pragma mark NSObject
 
@@ -42,8 +64,7 @@
 	return string;
 }
 
-
-#pragma mark NSCoding
+#pragma mark - NSCoding
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -51,24 +72,24 @@
     
 	if (self)
     {
-        _guid = [decoder decodeObjectForKey:@"guid"];
-		_title = [decoder decodeObjectForKey:@"title"];
-		_link = [decoder decodeObjectForKey:@"link"];
-		_summary = [decoder decodeObjectForKey:@"summary"];
-		_url = [decoder decodeObjectForKey:@"url"];
-        _imageURL = [decoder decodeObjectForKey:@"imageURL"];
+        _guid = [decoder decodeObjectForKey:MWFeedInfoGuidKey];
+		_title = [decoder decodeObjectForKey:MWFeedInfoTitleKey];
+		_link = [decoder decodeObjectForKey:MWFeedInfoLinkKey];
+		_summary = [decoder decodeObjectForKey:MWFeedInfoSummaryKey];
+		_url = [decoder decodeObjectForKey:MWFeedInfoUrlKey];
+        _imageURL = [decoder decodeObjectForKey:MWFeedInfoImageUrlKey];
 	}
 	return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
-    [encoder encodeObject:_guid forKey:@"guid"];
-    [encoder encodeObject:_title forKey:@"title"];
-	[encoder encodeObject:_link forKey:@"link"];
-	[encoder encodeObject:_summary forKey:@"summary"];
-	[encoder encodeObject:_url forKey:@"url"];
-    [encoder encodeObject:_imageURL forKey:@"imageURL"];
+    [encoder encodeObject:_guid forKey:MWFeedInfoGuidKey];
+    [encoder encodeObject:_title forKey:MWFeedInfoTitleKey];
+	[encoder encodeObject:_link forKey:MWFeedInfoLinkKey];
+	[encoder encodeObject:_summary forKey:MWFeedInfoSummaryKey];
+	[encoder encodeObject:_url forKey:MWFeedInfoUrlKey];
+    [encoder encodeObject:_imageURL forKey:MWFeedInfoUrlKey];
 }
 
 @end
