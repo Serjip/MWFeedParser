@@ -40,19 +40,33 @@ static NSString * const MWFeedInfoImageUrlKey   = @"image";
 
 @implementation MWFeedInfo
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict
+- (instancetype)initWithObjectMap:(NSDictionary *)map
 {
     self = [super init];
     if (self)
     {
-        _guid = [dict objectForKey:MWFeedInfoGuidKey];
-        _title = [dict objectForKey:MWFeedInfoTitleKey];
-        _link = [dict objectForKey:MWFeedInfoLinkKey];
-        _summary = [dict objectForKey:MWFeedInfoSummaryKey];
-        _url = [dict objectForKey:MWFeedInfoUrlKey];
-        _imageURL = [dict objectForKey:MWFeedInfoImageUrlKey];
+        _guid = [map objectForKey:MWFeedInfoGuidKey];
+        _title = [map objectForKey:MWFeedInfoTitleKey];
+        _link = [map objectForKey:MWFeedInfoLinkKey];
+        _summary = [map objectForKey:MWFeedInfoSummaryKey];
+        _url = [map objectForKey:MWFeedInfoUrlKey];
+        _imageURL = [map objectForKey:MWFeedInfoImageUrlKey];
     }
     return self;
+}
+
+- (NSDictionary *)objectMap
+{
+    NSMutableDictionary *map = [NSMutableDictionary dictionary];
+    
+    [map setValue:_guid forKey:MWFeedInfoGuidKey];
+    [map setValue:_title forKey:MWFeedInfoTitleKey];
+    [map setValue:_link forKey:MWFeedInfoLinkKey];
+    [map setValue:_summary forKey:MWFeedInfoSummaryKey];
+    [map setValue:_url forKey:MWFeedInfoUrlKey];
+    [map setValue:_imageURL forKey:MWFeedInfoUrlKey];
+
+    return map;
 }
 
 #pragma mark NSObject

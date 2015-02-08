@@ -38,6 +38,7 @@
 @property (nonatomic, strong) NSURL *url;
 @property (nonatomic, strong) NSURL *imageURL;
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict;
+- (instancetype)initWithObjectMap:(NSDictionary *)map;
+- (NSDictionary *)objectMap;
 
 @end
