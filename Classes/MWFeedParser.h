@@ -104,8 +104,6 @@ typedef enum { FeedTypeUnknown, FeedTypeRSS, FeedTypeRSS1, FeedTypeAtom } FeedTy
 	NSMutableString *currentText;
 	NSDictionary *currentElementAttributes;
 	MWFeedItem *item;
-	MWFeedInfo *info;
-	
 }
 
 #pragma mark Public Properties
@@ -127,6 +125,9 @@ typedef enum { FeedTypeUnknown, FeedTypeRSS, FeedTypeRSS1, FeedTypeAtom } FeedTy
 
 // Whether parsing is in progress
 @property (nonatomic, readonly, getter=isParsing) BOOL parsing;
+
+// Feed info
+@property (nonatomic, strong, readonly) MWFeedInfo *info;
 
 #pragma mark Public Methods
 

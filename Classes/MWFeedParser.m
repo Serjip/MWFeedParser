@@ -52,7 +52,7 @@
 // Properties
 @synthesize url, request, delegate;
 @synthesize urlConnection, asyncData, asyncTextEncodingName, connectionType;
-@synthesize feedParseType, feedParser, currentPath, currentText, currentElementAttributes, item, info;
+@synthesize feedParseType, feedParser, currentPath, currentText, currentElementAttributes, item;
 @synthesize pathOfElementWithXHTMLType;
 @synthesize stopped, failed, parsing;
 
@@ -647,10 +647,10 @@
                     
                     // Info
                     if (!processed && feedParseType != ParseTypeItemsOnly) {
-                        if ([currentPath isEqualToString:@"/rss/channel/title"]) { if (processedText.length > 0) info.title = processedText; processed = YES; }
-                        else if ([currentPath isEqualToString:@"/rss/channel/description"]) { if (processedText.length > 0) info.summary = processedText; processed = YES; }
-                        else if ([currentPath isEqualToString:@"/rss/channel/link"]) { if (processedText.length > 0) info.link = processedText; processed = YES; }
-                        else if ([currentPath isEqualToString:@"/rss/channel/image/url"]) { if (processedText.length > 0) info.imageURL = [NSURL URLWithString:processedText]; processed = YES; }
+                        if ([currentPath isEqualToString:@"/rss/channel/title"]) { if (processedText.length > 0) _info.title = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/rss/channel/description"]) { if (processedText.length > 0) _info.summary = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/rss/channel/link"]) { if (processedText.length > 0) _info.link = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/rss/channel/image/url"]) { if (processedText.length > 0) _info.imageURL = [NSURL URLWithString:processedText]; processed = YES; }
                     }
                     
                     break;
@@ -675,10 +675,10 @@
                     
                     // Info
                     if (!processed && feedParseType != ParseTypeItemsOnly) {
-                        if ([currentPath isEqualToString:@"/rdf:RDF/channel/title"]) { if (processedText.length > 0) info.title = processedText; processed = YES; }
-                        else if ([currentPath isEqualToString:@"/rdf:RDF/channel/description"]) { if (processedText.length > 0) info.summary = processedText; processed = YES; }
-                        else if ([currentPath isEqualToString:@"/rdf:RDF/channel/link"]) { if (processedText.length > 0) info.link = processedText; processed = YES; }
-                        else if ([currentPath isEqualToString:@"/rdf:RDF/channel/image/url"]) { if (processedText.length > 0) info.imageURL = [NSURL URLWithString:processedText]; processed = YES; }
+                        if ([currentPath isEqualToString:@"/rdf:RDF/channel/title"]) { if (processedText.length > 0) _info.title = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/rdf:RDF/channel/description"]) { if (processedText.length > 0) _info.summary = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/rdf:RDF/channel/link"]) { if (processedText.length > 0) _info.link = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/rdf:RDF/channel/image/url"]) { if (processedText.length > 0) _info.imageURL = [NSURL URLWithString:processedText]; processed = YES; }
                     }
                     
                     break;
@@ -716,9 +716,9 @@
                     
                     // Info
                     if (!processed && feedParseType != ParseTypeItemsOnly) {
-                        if ([currentPath isEqualToString:@"/feed/title"]) { if (processedText.length > 0) info.title = processedText; processed = YES; }
-                        else if ([currentPath isEqualToString:@"/feed/description"]) { if (processedText.length > 0) info.summary = processedText; processed = YES; }
-                        else if ([currentPath isEqualToString:@"/feed/link"]) { [self processAtomLink:currentElementAttributes andAddToMWObject:info]; processed = YES;}
+                        if ([currentPath isEqualToString:@"/feed/title"]) { if (processedText.length > 0) _info.title = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/feed/description"]) { if (processedText.length > 0) _info.summary = processedText; processed = YES; }
+                        else if ([currentPath isEqualToString:@"/feed/link"]) { [self processAtomLink:currentElementAttributes andAddToMWObject:_info]; processed = YES;}
                     }
                     
                     break;
@@ -768,7 +768,7 @@
                 (feedType == FeedTypeAtom && [qName isEqualToString:@"feed"])) {
                 
                 // Document ending so if we havent sent off feed info yet, do so
-                if (info && feedParseType != ParseTypeItemsOnly) [self dispatchFeedInfoToDelegate];
+                if (_info && feedParseType != ParseTypeItemsOnly) [self dispatchFeedInfoToDelegate];
                 
             }	
         }
@@ -867,11 +867,12 @@
 #pragma mark Send Items to Delegate
 
 - (void)dispatchFeedInfoToDelegate {
-	if (info) {
+	if (self.info)
+    {
 	
 		// Inform delegate
 		if ([delegate respondsToSelector:@selector(feedParser:didParseFeedInfo:)])
-			[delegate feedParser:self didParseFeedInfo:info];
+			[delegate feedParser:self didParseFeedInfo:self.info];
 		
 		// Debug log
 		MWLog(@"MWFeedParser: Feed info for \"%@\" successfully parsed", info.title);

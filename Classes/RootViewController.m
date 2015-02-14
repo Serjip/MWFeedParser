@@ -110,6 +110,13 @@
 - (void)feedParserDidFinish:(MWFeedParser *)parser {
 	NSLog(@"Finished Parsing%@", (parser.stopped ? @" (Stopped)" : @""));
     [self updateTableWithParsedItems];
+    
+    NSLog(@"%@", parser.info.feedItems);
+}
+
+- (BOOL)feedParser:(MWFeedParser *)parser shouldAddFeedItem:(MWFeedItem *)item forFeedInfo:(MWFeedInfo *)feedInfo
+{
+    return YES;
 }
 
 - (void)feedParser:(MWFeedParser *)parser didFailWithError:(NSError *)error {
