@@ -37,6 +37,7 @@
 @property (nonatomic, strong) NSString *summary;
 @property (nonatomic, strong) NSURL *url;
 @property (nonatomic, strong) NSURL *imageURL;
+@property (nonatomic, strong) NSArray *feedItems;
 
 - (instancetype)initWithObjectMap:(NSDictionary *)map;
 - (NSDictionary *)objectMap;

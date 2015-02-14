@@ -29,6 +29,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class MWFeedInfo;
+
 @interface MWFeedItem : NSObject <NSCoding>
 
 @property (strong, nonatomic) NSString *identifier;
@@ -47,6 +49,7 @@
 //     type: what its type is, a standard MIME type  (NSString)
 @property (strong, nonatomic) NSArray *enclosures;
 @property (strong, nonatomic) NSURL *imageURL;
+@property (weak, nonatomic) MWFeedInfo *feedInfo;
 
 /**
  It is a guid identifier for the feed item

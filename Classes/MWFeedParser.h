@@ -62,6 +62,8 @@ typedef enum { FeedTypeUnknown, FeedTypeRSS, FeedTypeRSS1, FeedTypeAtom } FeedTy
 - (void)feedParser:(MWFeedParser *)parser didParseFeedItem:(MWFeedItem *)item;
 - (void)feedParserDidFinish:(MWFeedParser *)parser;
 - (void)feedParser:(MWFeedParser *)parser didFailWithError:(NSError *)error;
+- (BOOL)feedParser:(MWFeedParser *)parser shouldAddFeedItem:(MWFeedItem *)item forFeedInfo:(MWFeedInfo *)feedInfo;
+
 @end
 
 // MWFeedParser
@@ -133,6 +135,9 @@ typedef enum { FeedTypeUnknown, FeedTypeRSS, FeedTypeRSS1, FeedTypeAtom } FeedTy
 
 // Init MWFeedParser with a customized request instance
 - (id)initWithFeedRequest:(NSMutableURLRequest *)feedRequest;
+
+// Init parser for special feed item
+- (id)initWithFeedInfo:(MWFeedInfo *)feedInfo;
 
 // Begin parsing
 - (BOOL)parse;

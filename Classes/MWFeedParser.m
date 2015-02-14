@@ -82,7 +82,8 @@
 
 // Initialise with a URL
 - (id)initWithFeedURL:(NSURL *)feedURL {
-	if ((self = [self init])) {
+	
+    if ((self = [self init])) {
 		
         // URL
 		if ([feedURL isKindOfClass:[NSString class]]) {
@@ -107,6 +108,16 @@
         self.url = feedRequest.URL;
         self.request = feedRequest;
     }
+    return self;
+}
+
+- (instancetype)initWithFeedInfo:(MWFeedInfo *)feedInfo
+{
+    self = [self initWithFeedURL:feedInfo.url];
+    
+    self.info = feedInfo;
+    self.feedParseType = ParseTypeItemsOnly;
+    
     return self;
 }
 
@@ -193,10 +204,18 @@
 - (void)startParsingData:(NSData *)data textEncodingName:(NSString *)textEncodingName {
 	if (data && !feedParser) {
 		
-		// Create feed info
-		MWFeedInfo *i = [[MWFeedInfo alloc] init];
-        i.url = self.url;
-		self.info = i;
+        
+        if (self.info && self.feedParseType == ParseTypeItemsOnly)
+        {
+            // probably do somthing
+        }
+        else
+        {
+            // Create feed info
+            MWFeedInfo *i = [MWFeedInfo new];
+            i.url = self.url;
+            self.info = i;
+        }
 		
 		// Check whether it's UTF-8
 		if (![[textEncodingName lowercaseString] isEqualToString:@"utf-8"]) {
@@ -857,15 +876,16 @@
 		// Debug log
 		MWLog(@"MWFeedParser: Feed info for \"%@\" successfully parsed", info.title);
 		
-		// Finish
-		self.info = nil;
+//		 Finish
+//		self.info = nil;
 		
 	}
 }
 
-- (void)dispatchFeedItemToDelegate {
-	if (item) {
-
+- (void)dispatchFeedItemToDelegate
+{
+	if (item)
+    {
 		// Process before hand
 		if (!item.summary) { item.summary = item.content; item.content = nil; }
 		if (!item.date && item.updated) { item.date = item.updated; }
@@ -877,9 +897,26 @@
 		if ([delegate respondsToSelector:@selector(feedParser:didParseFeedItem:)])
 			[delegate feedParser:self didParseFeedItem:item];
 		
+        
+        if ([delegate respondsToSelector:@selector(feedParser:shouldAddFeedItem:forFeedInfo:)]
+            && [self.delegate feedParser:self shouldAddFeedItem:self.item forFeedInfo:self.info]
+            )
+        {
+        
+            if ([self.info.feedItems isKindOfClass:[NSMutableArray class]])
+            {
+                [(NSMutableArray *)self.info.feedItems addObject:self.item];
+            }
+            else
+            {
+                NSMutableArray *array = [NSMutableArray arrayWithArray:self.info.feedItems];
+                [array addObject:self.item];
+                self.info.feedItems = array;
+            }
+        }
+        
 		// Finish
 		self.item = nil;
-		
 	}
 }
 

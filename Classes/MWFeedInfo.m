@@ -35,6 +35,7 @@ static NSString * const MWFeedInfoLinkKey       = @"link";
 static NSString * const MWFeedInfoSummaryKey    = @"summary";
 static NSString * const MWFeedInfoUrlKey        = @"url";
 static NSString * const MWFeedInfoImageUrlKey   = @"image";
+static NSString * const MWFeedInfoFeedItems     = @"feed_items";
 
 #define EXCERPT(str, len) (([str length] > len) ? [[str substringToIndex:len-1] stringByAppendingString:@"…"] : str)
 
@@ -92,6 +93,7 @@ static NSString * const MWFeedInfoImageUrlKey   = @"image";
 		_summary = [decoder decodeObjectForKey:MWFeedInfoSummaryKey];
 		_url = [decoder decodeObjectForKey:MWFeedInfoUrlKey];
         _imageURL = [decoder decodeObjectForKey:MWFeedInfoImageUrlKey];
+        _feedItems = [decoder decodeObjectForKey:MWFeedInfoFeedItems];
 	}
 	return self;
 }
@@ -104,6 +106,7 @@ static NSString * const MWFeedInfoImageUrlKey   = @"image";
 	[encoder encodeObject:_summary forKey:MWFeedInfoSummaryKey];
 	[encoder encodeObject:_url forKey:MWFeedInfoUrlKey];
     [encoder encodeObject:_imageURL forKey:MWFeedInfoUrlKey];
+    [encoder encodeObject:_feedItems forKey:MWFeedInfoFeedItems];
 }
 
 @end

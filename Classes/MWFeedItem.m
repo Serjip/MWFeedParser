@@ -91,6 +91,7 @@
         
         _imageURL = [decoder decodeObjectForKey:@"imageURL"];
         _guid = [decoder decodeObjectForKey:@"guid"];
+        _feedInfo = [decoder decodeObjectForKey:@"feedInfo"];
 	}
 	return self;
 }
@@ -108,6 +109,7 @@
 	[encoder encodeObject:_enclosures forKey:@"enclosures"];
     [encoder encodeObject:_imageURL forKey:@"imageURL"];
     [encoder encodeObject:self.guid forKey:@"guid"];
+    [encoder encodeObject:_feedInfo forKey:@"feedInfo"];
 }
 
 @end
