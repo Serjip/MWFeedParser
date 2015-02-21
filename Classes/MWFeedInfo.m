@@ -65,7 +65,7 @@ static NSString * const MWFeedInfoFeedItems     = @"feed_items";
     [map setValue:_link forKey:MWFeedInfoLinkKey];
     [map setValue:_summary forKey:MWFeedInfoSummaryKey];
     [map setValue:_url forKey:MWFeedInfoUrlKey];
-    [map setValue:_imageURL forKey:MWFeedInfoUrlKey];
+    [map setValue:_imageURL forKey:MWFeedInfoImageUrlKey];
 
     return map;
 }
@@ -105,7 +105,7 @@ static NSString * const MWFeedInfoFeedItems     = @"feed_items";
 	[encoder encodeObject:_link forKey:MWFeedInfoLinkKey];
 	[encoder encodeObject:_summary forKey:MWFeedInfoSummaryKey];
 	[encoder encodeObject:_url forKey:MWFeedInfoUrlKey];
-    [encoder encodeObject:_imageURL forKey:MWFeedInfoUrlKey];
+    [encoder encodeObject:_imageURL forKey:MWFeedInfoImageUrlKey];
     [encoder encodeObject:_feedItems forKey:MWFeedInfoFeedItems];
 }
 
