@@ -28,7 +28,6 @@
 //
 
 #import "MWFeedItem.h"
-#import "NSString+HTML.h"
 
 #define EXCERPT(str, len) (([str length] > len) ? [[str substringToIndex:len-1] stringByAppendingString:@"…"] : str)
 
@@ -41,35 +40,6 @@
 	if (self.title)   [string appendFormat:@"“%@”", EXCERPT(self.title, 50)];
 	if (self.date)    [string appendFormat:@" - %@", self.date];
 	return string;
-}
-
-#pragma mark - Properties
-
-@synthesize guid = _guid;
-
-- (NSString *)guid
-{
-    if (_guid)
-        return _guid;
-    
-    if (self.identifier.length)
-    {
-        _guid = [self.identifier md5HashSum];
-    }
-    else if (self.link.length)
-    {
-        _guid = [self.link md5HashSum];
-    }
-    else if (self.title.length)
-    {
-        _guid = [self.title md5HashSum];
-    }
-    else
-    {
-        _guid = [[NSString stringWithFormat:@"%@%@%@%@", self.identifier, self.date, self.title, self.link] md5HashSum];
-    }
-    
-    return _guid;
 }
 
 #pragma mark NSCoding
@@ -90,7 +60,6 @@
 		_enclosures = [decoder decodeObjectForKey:@"enclosures"];
         
         _imageURL = [decoder decodeObjectForKey:@"imageURL"];
-        _guid = [decoder decodeObjectForKey:@"guid"];
 	}
 	return self;
 }
@@ -107,7 +76,6 @@
 	[encoder encodeObject:_author forKey:@"author"];
 	[encoder encodeObject:_enclosures forKey:@"enclosures"];
     [encoder encodeObject:_imageURL forKey:@"imageURL"];
-    [encoder encodeObject:self.guid forKey:@"guid"];
 }
 
 @end

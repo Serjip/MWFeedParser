@@ -48,9 +48,4 @@
 @property (strong, nonatomic) NSArray *enclosures;
 @property (strong, nonatomic) NSURL *imageURL;
 
-/**
- It is a guid identifier for the feed item
- */
-@property (strong, nonatomic, readonly) NSString *guid;
-
 @end
