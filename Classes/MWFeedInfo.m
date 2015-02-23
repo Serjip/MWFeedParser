@@ -42,8 +42,7 @@
 	return string;
 }
 
-
-#pragma mark NSCoding
+#pragma mark - NSCoding
 
 - (id)initWithCoder:(NSCoder *)decoder
 {

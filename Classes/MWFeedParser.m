@@ -82,7 +82,8 @@
 
 // Initialise with a URL
 - (id)initWithFeedURL:(NSURL *)feedURL {
-	if ((self = [self init])) {
+	
+    if ((self = [self init])) {
 		
         // URL
 		if ([feedURL isKindOfClass:[NSString class]]) {
@@ -848,11 +849,12 @@
 #pragma mark Send Items to Delegate
 
 - (void)dispatchFeedInfoToDelegate {
-	if (info) {
+	if (self.info)
+    {
 	
 		// Inform delegate
 		if ([delegate respondsToSelector:@selector(feedParser:didParseFeedInfo:)])
-			[delegate feedParser:self didParseFeedInfo:info];
+			[delegate feedParser:self didParseFeedInfo:self.info];
 		
 		// Debug log
 		MWLog(@"MWFeedParser: Feed info for \"%@\" successfully parsed", info.title);
@@ -863,9 +865,10 @@
 	}
 }
 
-- (void)dispatchFeedItemToDelegate {
-	if (item) {
-
+- (void)dispatchFeedItemToDelegate
+{
+	if (item)
+    {
 		// Process before hand
 		if (!item.summary) { item.summary = item.content; item.content = nil; }
 		if (!item.date && item.updated) { item.date = item.updated; }
@@ -879,7 +882,6 @@
 		
 		// Finish
 		self.item = nil;
-		
 	}
 }
 
